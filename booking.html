@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing & Booking | Chandler Chase</title>
+<meta name="description" content="Book a free discovery call or purchase one of our AI consulting packages.">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+  :root{
+    --gold:#B2814C;
+    --gold-soft:#C9A574;
+    --charcoal:#141210;
+    --cream:#F7F3EC;
+    --txt:rgba(233,228,214,.9);
+    --txt-dim:rgba(233,228,214,.5);
+    --sans:"Calibri","Segoe UI",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--sans);
+    background:radial-gradient(ellipse at 50% 38%, #1E1A15 0%, #16130F 45%, #0C0A08 100%);
+    color:var(--txt);
+    -webkit-font-smoothing:antialiased;
+  }
+  .container{max-width:960px;margin:0 auto;padding:0 24px;}
+  header{padding:22px 0;border-bottom:1px solid rgba(201,165,116,.15);position:sticky;top:0;background:rgba(20,18,16,.95);z-index:100;}
+  .nav{display:flex;justify-content:space-between;align-items:center;}
+  .logo{font-weight:bold;font-size:17px;letter-spacing:0.5px;color:var(--txt);}
+  .logo span{color:var(--gold);}
+  .nav a{color:var(--txt-dim);text-decoration:none;font-size:14px;}
+  .nav a:hover{color:var(--gold);}
+  .nav a.cta{background:var(--gold);color:var(--charcoal);padding:10px 18px;border-radius:6px;font-weight:bold;}
+
+  section{padding:72px 0;}
+  section.tight{padding:48px 0;}
+  h1{font-size:48px;line-height:1.15;letter-spacing:-0.5px;margin-bottom:20px;color:var(--txt);}
+  h2{font-size:32px;line-height:1.2;margin-bottom:24px;letter-spacing:-0.3px;color:var(--txt);}
+  h3{font-size:22px;margin-bottom:16px;color:var(--txt);}
+  .kicker{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-soft);margin-bottom:14px;font-weight:bold;}
+  p.lead{font-size:19px;color:var(--txt-dim);margin-bottom:28px;max-width:680px;}
+  p{margin-bottom:16px;max-width:680px;color:var(--txt-dim);}
+
+  .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin:40px 0;}
+  .card{background:rgba(20,18,16,.5);border:1px solid rgba(201,165,116,.2);border-radius:10px;padding:28px;transition:all 0.3s ease;}
+  .card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,0.4);border-color:var(--gold);}
+  .card.featured{border:2px solid var(--gold);transform:scale(1.05);}
+  .card .tag{position:absolute;top:-12px;left:20px;background:var(--gold);color:var(--charcoal);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:bold;text-transform:uppercase;}
+  .price{font-size:44px;font-weight:bold;color:var(--gold);margin:16px 0;}
+  .price small{font-size:16px;color:var(--txt-dim);}
+  .card ul{margin-left:20px;margin-bottom:20px;color:var(--txt-dim);font-size:14px;}
+  .card li{margin-bottom:8px;}
+
+  .cta-btn{display:inline-block;background:var(--gold);color:var(--charcoal);text-decoration:none;padding:15px 28px;border-radius:6px;font-size:16px;font-weight:bold;border:none;cursor:pointer;transition:background 0.2s;}
+  .cta-btn:hover{background:var(--gold-soft);}
+
+  #formSection{background:rgba(20,18,16,.88);border:1px solid rgba(201,165,116,.28);border-radius:16px;padding:40px;max-width:500px;margin:0 auto;}
+  .flow-selector{display:none;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid rgba(201,165,116,.28);}
+  .flow-selector.show{display:block;}
+  .flow-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+  .flow-btn{padding:12px;background:rgba(233,228,214,.04);border:1px solid rgba(201,165,116,.28);border-radius:8px;cursor:pointer;text-align:center;font-size:13px;transition:all .2s;}
+  .flow-btn:hover{border-color:var(--gold);background:rgba(201,165,116,.08);}
+  .flow-btn.active{background:var(--gold);color:var(--charcoal);border-color:var(--gold);font-weight:700;}
+
+  .flow{display:none;}
+  .flow.show{display:block;}
+  .field{margin-bottom:18px;}
+  label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold-soft);margin-bottom:6px;}
+  input,select{width:100%;padding:12px 14px;font-family:var(--sans);font-size:14px;background:rgba(233,228,214,.04);border:1px solid rgba(201,165,116,.28);border-radius:8px;color:var(--txt);outline:none;}
+  input:focus,select:focus{border-color:var(--gold-soft);}
+  input::placeholder{color:var(--txt-dim);}
+  .slots{margin:20px 0;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .slot{padding:12px;border:1px solid rgba(201,165,116,.28);border-radius:8px;background:rgba(233,228,214,.02);cursor:pointer;text-align:center;font-size:13px;transition:all .2s;}
+  .slot:hover{border-color:var(--gold);background:rgba(201,165,116,.08);}
+  .slot.selected{background:var(--gold);color:var(--charcoal);border-color:var(--gold);font-weight:700;}
+  .submit{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold) 0%,#9A6B3C 100%);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;margin-top:14px;}
+  .submit:hover{opacity:.95;}
+  .submit:disabled{opacity:.5;cursor:not-allowed;}
+  .success{display:none;text-align:center;color:var(--gold-soft);}
+  .success.show{display:block;}
+  #card-element{background:rgba(233,228,214,.04);border:1px solid rgba(201,165,116,.28);border-radius:8px;padding:12px 14px;color:var(--txt);}
+  .error{color:#ff6b6b;font-size:12px;margin-top:6px;}
+
+  @media(max-width:768px){
+    h1{font-size:36px;}
+    h2{font-size:26px;}
+    .pricing-grid{grid-template-columns:1fr;}
+    .card.featured{transform:scale(1);}
+    #formSection{padding:24px;}
+    .slots{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div class="logo">chandlerchase<span>.ai</span></div>
+    <a href="#pricing" class="cta">Pricing & Booking</a>
+  </div>
+</header>
+
+<section id="pricing">
+  <div class="container">
+    <div class="kicker">Investment Tiers</div>
+    <h1>How to work together</h1>
+    <p class="lead">Start free. Scale as you grow. Done with you at the start, done for you when you are ready to hand it off.</p>
+
+    <div class="pricing-grid">
+      <div class="card">
+        <div class="tag">Start here</div>
+        <h3>Onboarding</h3>
+        <div class="price">$997</div>
+        <p style="font-size:11px;color:var(--gold-soft);text-transform:uppercase;font-weight:bold;margin-bottom:16px;">One-time investment</p>
+        <p>Two sessions, done with you. An AI audit, then your priority fixes set up together.</p>
+        <ul>
+          <li>Session 1: AI Audit</li>
+          <li>Session 2: AI Solutions built with you</li>
+          <li>Your AI voice agent, live</li>
+          <li>Done with you, you own it</li>
+        </ul>
+        <a href="#booking" class="cta-btn">Book Discovery Call</a>
+      </div>
+
+      <div class="card featured">
+        <div class="tag">Most popular</div>
+        <h3>Launchpad</h3>
+        <div class="price">$3<small>,500</small></div>
+        <p style="font-size:11px;color:var(--gold-soft);text-transform:uppercase;font-weight:bold;margin-bottom:16px;">One-time investment</p>
+        <p>Four sessions, done with you. We build your core AI engine together.</p>
+        <ul>
+          <li>4 sessions, done with you</li>
+          <li>Your full lead and follow-up engine</li>
+          <li>AI voice agent plus automations</li>
+          <li>You learn the systems as we build</li>
+          <li>30 days of tuning included</li>
+        </ul>
+        <a href="#booking" class="cta-btn">Book Discovery Call</a>
+      </div>
+
+      <div class="card">
+        <div class="tag">Premium</div>
+        <h3>Autopilot</h3>
+        <div class="price">from $7<small>,500</small></div>
+        <p style="font-size:11px;color:var(--gold-soft);text-transform:uppercase;font-weight:bold;margin-bottom:16px;">Custom, done for you</p>
+        <p>Fully custom AI systems, built for you around your business over 30 to 60 days.</p>
+        <ul>
+          <li>Custom AI systems, scoped to you</li>
+          <li>Deep-dive audit to start</li>
+          <li>Built for you, you do not do the work</li>
+          <li>Delivered in 30 to 60 days</li>
+          <li>90 days of tuning and support</li>
+        </ul>
+        <a href="#booking" class="cta-btn">Schedule a Call</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="booking" class="tight">
+  <div class="container">
+    <h2 style="text-align:center;margin-bottom:40px;">Ready to get started?</h2>
+    <div id="formSection">
+      <div class="flow-selector show">
+        <h1>What do you want to do?</h1>
+        <div class="flow-buttons">
+          <div class="flow-btn active" data-flow="discovery">Book Free Call</div>
+          <div class="flow-btn" data-flow="purchase">Purchase Package</div>
+        </div>
+      </div>
+
+      <!-- Discovery Call Form -->
+      <div id="discoveryFlow" class="flow show">
+        <h1>Discovery Call</h1>
+        <p class="sub">30 minutes. No charge, no pitch. You'll tell me what you are building and where the friction is. You leave with at least one thing you can fix this week, whether we ever work together or not.</p>
+
+        <form id="bookForm">
+          <div class="field">
+            <label for="name">Your name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+
+          <div class="field">
+            <label>Select a time (ET)</label>
+            <div class="slots" id="slots"></div>
+          </div>
+
+          <button type="submit" class="submit" id="submitBtn">Book call & get calendar invite</button>
+        </form>
+
+        <div class="success" id="discoverySuccess">
+          <p><strong style="color:var(--gold);">✓ Confirmed</strong></p>
+          <p>Check your email for a calendar invite. Chandler will call you at the scheduled time.</p>
+        </div>
+      </div>
+
+      <!-- Purchase Package Form -->
+      <div id="purchaseFlow" class="flow">
+        <h1>Purchase Package</h1>
+        <p class="sub">Choose your package and complete payment below.</p>
+
+        <form id="paymentForm">
+          <div class="field">
+            <label for="package">Select Package</label>
+            <select id="package" name="package" required>
+              <option value="">Choose a package...</option>
+              <option value="starter">Onboarding - $997</option>
+              <option value="launchpad">Launchpad - $3,500</option>
+              <option value="autopilot">Autopilot - from $7,500</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="paymentName">Your name</label>
+            <input type="text" id="paymentName" name="name" required>
+          </div>
+
+          <div class="field">
+            <label for="paymentEmail">Email</label>
+            <input type="email" id="paymentEmail" name="email" required>
+          </div>
+
+          <div class="field">
+            <label for="phone">Phone (optional)</label>
+            <input type="tel" id="phone" name="phone">
+          </div>
+
+          <div class="field">
+            <label>Card details</label>
+            <div id="card-element"></div>
+            <div id="card-errors" class="error"></div>
+          </div>
+
+          <button type="submit" class="submit" id="paymentBtn">Complete Purchase</button>
+        </form>
+
+        <div class="success" id="paymentSuccess">
+          <p><strong style="color:var(--gold);">✓ Payment Successful</strong></p>
+          <p>Check your email for next steps. Chandler will be in touch soon to schedule your first session.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+const CHANDLER_EMAIL = "cwc@chandlerchase.com";
+const TIMEZONE = "America/New_York";
+const STRIPE_PUBLIC_KEY = 'pk_live_51TrJKRDTgGcShJv54aDT39HvayHhGtQ4GHckXKfXbpAoaTpdUlm8NwryOiZ56etadgv0vE28e7A9iMZsJclhDhhN00T02EL3nA';
+let stripe, elements, cardElement;
+
+function initStripe() {
+  if (!stripe) {
+    stripe = Stripe(STRIPE_PUBLIC_KEY);
+  }
+  elements = stripe.elements();
+  cardElement = elements.create('card', {
+    style: {
+      base: {
+        fontFamily: 'var(--sans)',
+        color: 'rgba(233,228,214,.9)',
+        backgroundColor: 'transparent'
+      },
+      invalid: { color: '#ff6b6b' }
+    }
+  });
+  cardElement.mount('#card-element');
+  cardElement.addEventListener('change', e => {
+    document.getElementById('card-errors').textContent = e.error ? e.error.message : '';
+  });
+}
+
+document.querySelectorAll('.flow-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const flow = btn.dataset.flow;
+    document.querySelectorAll('.flow-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.getElementById('discoveryFlow').style.display = flow === 'discovery' ? 'block' : 'none';
+    document.getElementById('purchaseFlow').style.display = flow === 'purchase' ? 'block' : 'none';
+
+    if (flow === 'purchase' && !elements) initStripe();
+  });
+});
+
+function generateSlots(){
+  const slots = [];
+  const now = new Date();
+  const startDate = new Date(now);
+  startDate.setDate(startDate.getDate() + 1);
+
+  for(let d = 0; d < 60; d++){
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + d);
+    const dow = date.getDay();
+    if(dow === 0) continue;
+
+    let times = [15, 15.5, 18, 18.5];
+    if(dow === 2) times = [15, 15.5];
+
+    times.forEach(h => {
+      const slotTime = new Date(date);
+      const hour = Math.floor(h);
+      const min = (h % 1) * 60;
+      slotTime.setHours(hour, min, 0, 0);
+      if(slotTime > now) slots.push(new Date(slotTime));
+    });
+  }
+  return slots.slice(0, 20);
+}
+
+function formatSlot(date){
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    month:'short', day:'numeric', hour:'numeric', minute:'2-digit', hour12:true
+  });
+  return formatter.format(date);
+}
+
+function generateICS(name, email, slotTime){
+  const eventStart = slotTime;
+  const eventEnd = new Date(eventStart.getTime() + 30 * 60000);
+
+  function formatDate(d){
+    return d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  }
+
+  return `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Chandler Chase//Discovery Call//EN
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+X-LIC-LOCATION:${TIMEZONE}
+BEGIN:VEVENT
+UID:discovery-${Date.now()}@chandlerchase.ai
+DTSTAMP:${formatDate(new Date())}
+DTSTART:${formatDate(eventStart)}
+DTEND:${formatDate(eventEnd)}
+SUMMARY:Discovery Call with Chandler Chase
+DESCRIPTION:30-minute free consultation. No charge and no pitch.
+LOCATION:Phone Call
+ORGANIZER;CN=Chandler Chase:mailto:${CHANDLER_EMAIL}
+ATTENDEE;CN=${name};RSVP=TRUE:mailto:${email}
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR`;
+}
+
+const slots = generateSlots();
+const slotsDiv = document.getElementById('slots');
+let selectedSlot = null;
+
+slots.forEach((slot) => {
+  const btn = document.createElement('div');
+  btn.className = 'slot';
+  btn.textContent = formatSlot(slot);
+  btn.onclick = () => {
+    document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedSlot = slot;
+  };
+  slotsDiv.appendChild(btn);
+});
+
+document.getElementById('bookForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if(!selectedSlot){
+    alert('Please select a time');
+    return;
+  }
+
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const btn = document.getElementById('submitBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'Booking...';
+
+  try{
+    const ics = generateICS(name, email, selectedSlot);
+    const payload = {
+      _subject: `Discovery Call Booked: ${formatSlot(selectedSlot)}`,
+      name: name,
+      email: email,
+      time: formatSlot(selectedSlot),
+      message: `Discovery call scheduled\nProspect: ${name}\nEmail: ${email}\nTime: ${formatSlot(selectedSlot)} ET`,
+      _cc: CHANDLER_EMAIL,
+      _ics: ics
+    };
+
+    const response = await fetch("https://formsubmit.co/ajax/" + email, {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify(payload)
+    });
+
+    if(!response.ok) throw new Error("Submission failed");
+
+    await fetch("https://formsubmit.co/ajax/" + CHANDLER_EMAIL, {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify(payload)
+    });
+
+    document.getElementById('bookForm').style.display = 'none';
+    document.getElementById('discoverySuccess').classList.add('show');
+  }catch(err){
+    console.error(err);
+    btn.disabled = false;
+    btn.textContent = 'Book call & get calendar invite';
+    alert('Booking failed. Please try again.');
+  }
+});
+
+document.getElementById('paymentForm').addEventListener('submit', async e => {
+  e.preventDefault();
+
+  const packageType = document.getElementById('package').value;
+  if(!packageType){
+    alert('Please select a package');
+    return;
+  }
+
+  const name = document.getElementById('paymentName').value;
+  const email = document.getElementById('paymentEmail').value;
+  const phone = document.getElementById('phone').value;
+  const btn = document.getElementById('paymentBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+
+  try{
+    const response = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ package: packageType, email, name, phone })
+    });
+
+    if(!response.ok) throw new Error('Failed to create payment');
+
+    const { clientSecret } = await response.json();
+
+    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: cardElement,
+        billing_details: { name, email }
+      }
+    });
+
+    if(error){
+      throw new Error(error.message);
+    }
+
+    if(paymentIntent.status === 'succeeded'){
+      document.getElementById('paymentForm').style.display = 'none';
+      document.getElementById('paymentSuccess').classList.add('show');
+    }else{
+      throw new Error('Payment not completed');
+    }
+  }catch(err){
+    console.error(err);
+    document.getElementById('card-errors').textContent = err.message;
+    btn.disabled = false;
+    btn.textContent = 'Complete Purchase';
+  }
+});
+</script>
+</body>
+</html>

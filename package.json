@@ -1,0 +1,16 @@
+{
+  "name": "chandlerchase-ai",
+  "version": "1.0.0",
+  "description": "Chandler Chase AI Consulting",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site, no build needed'"
+  },
+  "dependencies": {
+    "stripe": "^14.0.0"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

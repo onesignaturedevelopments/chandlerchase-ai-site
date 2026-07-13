@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stop Being Your Own Admin | Chandler Chase</title>
+<style>
+  :root {
+    --gold: #B2814C;
+    --gold-soft: #C9A574;
+    --charcoal: #141210;
+    --cream: #F7F3EC;
+    --txt: rgba(233,228,214,.9);
+    --txt-dim: rgba(233,228,214,.5);
+    --sans: "Calibri", "Segoe UI", Arial, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: radial-gradient(ellipse at 50% 38%, #1E1A15 0%, #16130F 45%, #0C0A08 100%); color: var(--txt); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  header { padding: 22px 0; border-bottom: 1px solid rgba(201,165,116,.15); position: sticky; top: 0; background: rgba(20,18,16,.95); z-index: 100; }
+  .nav { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-weight: bold; font-size: 17px; letter-spacing: 0.5px; color: var(--txt); }
+  .logo span { color: var(--gold); }
+  .nav-right { display: flex; gap: 18px; align-items: center; }
+  .nav a { color: var(--txt-dim); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+  .nav a:hover { color: var(--gold); }
+  .nav a.cta { background: var(--gold); color: var(--charcoal); padding: 10px 18px; border-radius: 6px; font-weight: bold; }
+  .nav a.cta:hover { background: var(--gold-soft); }
+  section { padding: 72px 0; }
+  section.tight { padding: 48px 0; }
+  .kicker { font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold-soft); margin-bottom: 14px; font-weight: bold; }
+  h1 { font-size: 48px; line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 20px; color: var(--txt); }
+  h2 { font-size: 32px; line-height: 1.2; margin-bottom: 24px; letter-spacing: -0.3px; color: var(--txt); }
+  h3 { font-size: 22px; margin-bottom: 16px; color: var(--txt); }
+  p.lead { font-size: 19px; color: var(--txt-dim); margin-bottom: 28px; max-width: 680px; }
+  p { margin-bottom: 16px; max-width: 680px; color: var(--txt-dim); }
+  .muted { color: var(--txt-dim); }
+  .btn { display: inline-block; background: var(--gold); color: var(--charcoal); text-decoration: none; padding: 15px 28px; border-radius: 6px; font-size: 16px; font-weight: bold; transition: background 0.2s; }
+  .btn:hover { background: var(--gold-soft); }
+  .btn.ghost { background: transparent; color: var(--txt); border: 1.5px solid var(--gold); font-weight: normal; }
+  .btn.ghost:hover { background: rgba(178,129,76,.1); }
+  .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 40px; }
+  .hero-text h1 { font-size: 52px; }
+  .hero-image { text-align: center; }
+  .hero-image img { max-width: 100%; border-radius: 12px; }
+  .avatar-card { background: rgba(20,18,16,.5); border: 1px solid rgba(201,165,116,.2); border-radius: 12px; padding: 32px; margin: 48px 0; }
+  .avatar-card h3 { color: var(--gold); }
+  .avatar-card p { margin-bottom: 12px; }
+  .systems-row { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin: 40px 0; }
+  .system-item { background: rgba(20,18,16,.4); border-left: 3px solid var(--gold); padding: 20px; border-radius: 6px; }
+  .system-item h4 { color: var(--gold-soft); font-size: 14px; margin-bottom: 8px; }
+  .system-item p { font-size: 15px; }
+  .coming-soon-section { background: rgba(20,18,16,.5); border: 2px dashed rgba(201,165,116,.3); border-radius: 12px; padding: 48px; text-align: center; margin: 48px 0; }
+  .coming-soon-blur { opacity: 0.5; filter: blur(2px); pointer-events: none; margin: 24px 0; }
+  .coming-soon-blur svg { max-width: 200px; height: 200px; margin: 0 auto; display: block; }
+  .cta-box { background: rgba(20,18,16,.6); border: 2px solid var(--gold); border-radius: 10px; padding: 32px; margin-top: 32px; text-align: center; }
+  .cta-box h3 { font-size: 24px; margin-bottom: 16px; color: var(--txt); }
+  .cta-box p { margin-bottom: 20px; color: var(--txt-dim); }
+  input[type="email"] { width: 100%; max-width: 400px; padding: 12px; border: 1px solid rgba(201,165,116,.3); border-radius: 6px; font-size: 16px; margin-bottom: 12px; background: rgba(0,0,0,.3); color: var(--txt); }
+  input[type="email"]::placeholder { color: var(--txt-dim); }
+  button { background: var(--gold); color: var(--charcoal); padding: 15px 32px; border-radius: 6px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+  button:hover { background: var(--gold-soft); }
+  .note { font-size: 14px; color: var(--txt-dim); font-style: italic; margin-top: 8px; }
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin: 40px 0; }
+  .pricing-card { background: rgba(20,18,16,.5); border: 1px solid rgba(201,165,116,.2); border-radius: 10px; padding: 28px; }
+  .pricing-card.featured { border-color: var(--gold); background: rgba(178,129,76,.08); }
+  .pricing-card h4 { font-size: 18px; margin-bottom: 8px; color: var(--txt); }
+  .price { font-size: 44px; font-weight: bold; margin: 12px 0 4px; color: var(--gold); }
+  .price small { font-size: 16px; font-weight: normal; color: var(--txt-dim); }
+  .pricing-card ul { margin-left: 20px; margin-bottom: 20px; color: var(--txt-dim); font-size: 14px; }
+  .pricing-card li { margin-bottom: 8px; }
+  .testimonial { background: rgba(20,18,16,.4); border-left: 3px solid var(--gold); padding: 24px; margin: 24px 0; border-radius: 6px; }
+  .testimonial p { margin-bottom: 12px; font-style: italic; }
+  .testimonial-author { color: var(--gold-soft); font-weight: bold; font-size: 14px; }
+  .not-for { background: rgba(20,18,16,.4); border-radius: 10px; padding: 28px; margin: 32px 0; }
+  .not-for h3 { color: var(--gold-soft); }
+  .not-for ul { margin-left: 20px; color: var(--txt-dim); }
+  .not-for li { margin-bottom: 10px; }
+  footer { padding: 44px 0 60px; border-top: 1px solid rgba(201,165,116,.15); font-size: 13px; color: var(--txt-dim); }
+  .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
+  .footer-links a { color: var(--txt-dim); text-decoration: none; margin-left: 20px; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--gold); }
+  @media (max-width: 768px) {
+    h1 { font-size: 36px; }
+    h2 { font-size: 26px; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .systems-row { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .footer-content { flex-direction: column; align-items: flex-start; }
+    .footer-links { display: flex; flex-direction: column; }
+    .footer-links a { margin-left: 0; margin-top: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="logo">chandlerchase<span>.ai</span></div>
+    <div class="nav-right">
+      <a href="/skilltree.html">Skill Tree</a>
+      <a href="/freebies.html">Free Resources</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://www.linkedin.com/in/chandler-chase-007/" target="_blank">LinkedIn</a>
+      <a class="cta" href="/booking.html">Book a call</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">AI Consulting for Founders</div>
+    <h1>Stop being your own admin.</h1>
+    <p class="lead">You're building something. You're doing the work yourself. That means you're also doing the admin, the follow-ups, the proposals, the systems. You know AI can handle this. You just need someone to show you how, and coach you through it so you actually use it.</p>
+    <a class="btn" href="/booking.html">Book a 30-min discovery call</a>
+  </div>
+</section>
+
+<section>
+  <div class="wrap" style="text-align:center;">
+    <div class="kicker">The Framework</div>
+    <h2>26 AI systems. One business that runs itself.</h2>
+    <p style="max-width:620px;margin:0 auto 4px;">Everything a solo operator needs, mapped across six areas and wired to one Knowledge Base. This is the engine we build with you.</p>
+    <div style="max-width:640px;margin:22px auto 26px;">
+      <svg id="treeSvg" viewBox="0 0 760 500" style="width:100%;height:auto;display:block;" role="img" aria-label="A constellation of 26 AI systems radiating from a central Knowledge Base"></svg>
+    </div>
+    <a class="btn" href="/readiness.html">Take the AI Readiness Score</a>
+    <a class="btn ghost" href="/skilltree.html" style="margin-left:8px;">Explore the full skill tree</a>
+    <p style="margin-top:16px;color:var(--txt-dim);font-size:14px;">Free, 5 minutes. See where you are losing time and what to fix first.</p>
+  </div>
+</section>
+
+<script>
+(function(){
+  var svg = document.getElementById('treeSvg');
+  if(!svg) return;
+  var NS = 'http://www.w3.org/2000/svg';
+  var cx = 380, cy = 250;
+  var branches = [
+    {label:'Lead Capture', n:5},
+    {label:'Sales', n:4},
+    {label:'Marketing', n:5},
+    {label:'Client Care', n:4},
+    {label:'Operations', n:4},
+    {label:'Money', n:4}
+  ];
+  function el(t,a){ var e=document.createElementNS(NS,t); for(var k in a){ e.setAttribute(k,a[k]); } return e; }
+  var D=Math.PI/180;
+  branches.forEach(function(b,i){
+    var ang=(-90 + i*60)*D, ca=Math.cos(ang), sa=Math.sin(ang);
+    var px=Math.cos(ang+Math.PI/2), py=Math.sin(ang+Math.PI/2);
+    var outer=60 + (b.n-1)*28 + 14;
+    svg.appendChild(el('line',{x1:cx,y1:cy,x2:cx+ca*outer,y2:cy+sa*outer,stroke:'rgba(201,165,116,0.22)','stroke-width':1}));
+    for(var j=0;j<b.n;j++){
+      var r=60 + j*28, off=((j%2)*2-1)*9;
+      var x=cx+ca*r+px*off, y=cy+sa*r+py*off;
+      svg.appendChild(el('circle',{cx:x,cy:y,r:6.5,fill:'#B2814C','fill-opacity':0.85}));
+      svg.appendChild(el('circle',{cx:x,cy:y,r:6.5,fill:'none',stroke:'#C9A574','stroke-width':1,'stroke-opacity':0.6}));
+    }
+    var lr=outer+20, lx=cx+ca*lr, ly=cy+sa*lr;
+    var anchor = ca>0.25?'start':(ca<-0.25?'end':'middle');
+    var t=el('text',{x:lx,y:ly+4,'text-anchor':anchor,fill:'#C9A574','font-size':13,'font-weight':'bold','font-family':'Calibri, Segoe UI, Arial, sans-serif'});
+    t.textContent=b.label; svg.appendChild(t);
+  });
+  svg.appendChild(el('circle',{cx:cx,cy:cy,r:30,fill:'#B2814C'}));
+  svg.appendChild(el('circle',{cx:cx,cy:cy,r:34,fill:'none',stroke:'#C9A574','stroke-width':1.5,'stroke-opacity':0.7}));
+  var l1=el('text',{x:cx,y:cy-2,'text-anchor':'middle',fill:'#141210','font-size':11,'font-weight':'bold','font-family':'Calibri, Segoe UI, Arial, sans-serif'}); l1.textContent='Knowledge';
+  var l2=el('text',{x:cx,y:cy+12,'text-anchor':'middle',fill:'#141210','font-size':11,'font-weight':'bold','font-family':'Calibri, Segoe UI, Arial, sans-serif'}); l2.textContent='Base';
+  svg.appendChild(l1); svg.appendChild(l2);
+})();
+</script>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">Why Me</div>
+    <h2>I am not a consultant. I am an operator who automated himself first.</h2>
+    <p>I left a six-figure corporate job to build this full-time. I'm not going back.</p>
+    <p>I used AI to collapse timelines and execute with precision. This year alone:</p>
+    <ul style="margin-left: 24px; color: var(--txt-dim); margin-bottom: 28px;">
+      <li>Raised $3M in capital</li>
+      <li>Funded 3 of my 5 luxury development projects (my goal)</li>
+      <li>Built AI systems that help me estimate jobs, win bids, and make faster decisions</li>
+    </ul>
+    <p>The result: I spend less time on admin, more time on strategy. My AI agents handle the email triage, the proposals, the bookkeeping, the follow-ups, then report to me on what matters.</p>
+    <p>Every system I sell you is a system I use. If it breaks, it breaks on me first.</p>
+    <p style="margin-top: 28px;"><strong>AI is changing every day.</strong> Most founders are still using last week's tactics. I can show you how to stay ahead without staying up all night.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">Who This Is For</div>
+    <h2>You just started something. Do not let the admin bury it.</h2>
+    <div class="avatar-card">
+      <h3>The Solo Operator Who Does Everything</h3>
+      <p>You are great at your craft. The problem is you are also the receptionist, the marketer, the scheduler, and the follow-up person. When you are with a client you cannot answer the phone, so leads slip through the cracks and past clients forget to rebook.</p>
+      <p>You know AI could handle this. You have tried ChatGPT and watched the videos, but there are a thousand tools and none of it actually runs without you babysitting it. You do not even know where to start.</p>
+      <p>Meanwhile the calendar has holes you cannot explain, and it feels like competitors are figuring out something you have not.</p>
+      <p style="margin-top: 24px; font-weight: bold;">You do not need another tool. You need a system that answers, follows up, and rebooks in the background, so you can stay focused on the work and the people.</p>
+    </div>
+
+    <h3 style="margin-top: 48px;">What You Get</h3>
+    <div class="systems-row">
+      <div class="system-item">
+        <h4>AUDIT</h4>
+        <p>We map your business, find the 3 highest-ROI systems to build, and you pick which ones we start with.</p>
+      </div>
+      <div class="system-item">
+        <h4>SYSTEMS BUILT FOR YOU</h4>
+        <p>Custom AI systems designed around how you actually work, not how software companies think you should work.</p>
+      </div>
+      <div class="system-item">
+        <h4>COACHING</h4>
+        <p>Not just "here's your system." I walk you through WHY it works, WHAT it does, and HOW to use it in your business.</p>
+      </div>
+      <div class="system-item">
+        <h4>ACCOUNTABILITY</h4>
+        <p>30 days of tuning and refinement. You use it in real work. I make sure it sticks. We troubleshoot together.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="kicker">Investment</div>
+    <h2>Pick your path.</h2>
+    <p>Most new operators start with Onboarding for $997 and grow from there. Every tier begins with a discovery call, no pressure.</p>
+
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h4>Free Resources</h4>
+        <p class="muted" style="font-size: 14px; margin-bottom: 16px;">Start here</p>
+        <p style="margin-bottom: 20px;">Grab the templates, playbooks, and tools I use. No credit card.</p>
+        <a href="/freebies.html" class="btn ghost" style="display: block; text-align: center;">Explore freebies</a>
+      </div>
+
+      <div class="pricing-card">
+        <h4>Onboarding</h4>
+        <p class="muted" style="font-size: 14px; margin-bottom: 16px;">Done with you</p>
+        <div class="price">$997<small> one-time</small></div>
+        <p style="margin-bottom: 20px; font-size: 14px;">In one week, your phone gets answered and every lead followed up, running in the background while you stay on the work.</p>
+        <ul>
+          <li>Session 1: AI Audit of your business</li>
+          <li>Session 2: AI Solutions built with you</li>
+          <li>Your AI voice agent, live</li>
+          <li>Done with you, you own what we build</li>
+          <li>2-payment plan available</li>
+        </ul>
+        <a href="/booking.html" class="btn" style="display: block; text-align: center;">Book discovery call</a>
+      </div>
+
+      <div class="pricing-card featured">
+        <h4>Launchpad</h4>
+        <p class="muted" style="font-size: 14px; margin-bottom: 16px;">Done with you</p>
+        <div class="price">$3,997<small> one-time</small></div>
+        <p style="margin-bottom: 20px; font-size: 14px;">In two weeks, your business gets a brain AI runs from: your Flight Manual plus the systems that fill your calendar.</p>
+        <ul>
+          <li>Your Flight Manual, your AI-ready business brain</li>
+          <li>AI trained to write in your voice</li>
+          <li>Lead, follow-up, and nurture systems implemented</li>
+          <li>4 sessions, done with you</li>
+          <li>30 days of tuning included</li>
+        </ul>
+        <a href="/booking.html" class="btn" style="display: block; text-align: center;">Book discovery call</a>
+      </div>
+
+      <div class="pricing-card">
+        <h4>Autopilot</h4>
+        <p class="muted" style="font-size: 14px; margin-bottom: 16px;">Done for you, custom</p>
+        <div class="price">from $7,997</div>
+        <p style="margin-bottom: 20px; font-size: 14px;">Fully custom, done for you. We build your AI systems around your business over 30 to 60 days.</p>
+        <ul>
+          <li>Custom AI systems, scoped to you</li>
+          <li>Deep-dive audit to start</li>
+          <li>Built for you, you do not do the work</li>
+          <li>Delivered in 30 to 60 days</li>
+          <li>90 days of tuning and priority support</li>
+        </ul>
+        <a href="/booking.html" class="btn ghost" style="display: block; text-align: center;">Schedule a Call</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">Coming Soon</div>
+    <h2>Community Access</h2>
+    <p>Private community for founders using these systems. Live office hours, peer support, win celebrations, and direct access to the systems library.</p>
+
+    <div class="coming-soon-section" style="opacity: 0.6; filter: blur(1px);">
+      <h3>Join the founders building with AI</h3>
+      <p style="margin-bottom: 20px;">Get early access and founding member pricing when we launch.</p>
+
+      <form id="communityForm">
+        <input type="email" name="email" placeholder="your@email.com" required style="width: 100%; max-width: 400px; padding: 12px; border: 1px solid rgba(201,165,116,.3); border-radius: 6px; background: rgba(0,0,0,.3); color: var(--txt); margin-bottom: 12px;">
+        <br>
+        <button type="submit" class="btn" style="width: auto;">Get First Access</button>
+        <p class="note" style="margin-top: 16px;">You'll get one email when community launches. That's it.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">Real Results</div>
+    <h2>People are using this.</h2>
+
+    <div class="testimonial">
+      <p>"Chandler didn't just give me tools. He showed me how to think about automation. I went from doing admin work at night to actually thinking about my business strategy during the day."</p>
+      <div class="testimonial-author">Solo Service Business Owner, Charlotte</div>
+    </div>
+
+    <div class="testimonial">
+      <p>"The coaching part matters. Anyone can download templates. But having someone who's actually doing this work, who can say 'here's what I tried and here's why it works' — that changes everything."</p>
+      <div class="testimonial-author">Founder, Early Stage Startup</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">Reality Check</div>
+    <h2>Who this is NOT for.</h2>
+
+    <div class="not-for">
+      <h3>You want a turnkey solution with zero learning curve.</h3>
+      <p>This requires you to engage. You're going to learn how these systems work. You're going to use them yourself. If you want someone else to handle everything with zero involvement from you, the Autopilot tier might work, but this isn't a black box.</p>
+    </div>
+
+    <div class="not-for">
+      <h3>You want to buy it once and never think about it again.</h3>
+      <p>AI systems need tuning. They get better when you use them and give feedback. We'll work together to make yours work better over 30 days. That requires your time and attention.</p>
+    </div>
+
+    <div class="not-for">
+      <h3>You're just looking for another tool to try.</h3>
+      <p>This isn't a tool subscription. This is a coaching relationship. We're building systems together. If you're a chronic tool-shopper who collects software but doesn't use it, this won't work.</p>
+    </div>
+
+    <div class="not-for">
+      <h3>You need support in 47 different languages or vertical-specific features.</h3>
+      <p>I specialize in solo operators and small teams building real businesses. If you need enterprise support, I'm probably not your person.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap" style="text-align: center;">
+    <h2>Ready?</h2>
+    <p style="margin-bottom: 28px;">Let's spend 30 minutes together. No pitch. No deck. We'll just talk about what you're building and what's actually slowing you down.</p>
+    <a class="btn" href="/booking.html">Book your discovery call</a>
+    <p style="margin-top: 28px; color: var(--txt-dim); font-size: 14px;">Usually available within 48 hours. 30 minutes, no obligation.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-content">
+    <p>Chandler Chase AI Consulting</p>
+    <div class="footer-links">
+      <a href="/freebies.html">Free Resources</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="https://www.linkedin.com/in/chandler-chase-007/" target="_blank">LinkedIn</a>
+      <a href="mailto:cwc@chandlerchase.com">Email</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('communityForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    fetch('https://formsubmit.co/cwc@chandlerchase.com', {
+      method: 'POST',
+      body: new FormData(this)
+    }).then(response => {
+      if (response.ok) {
+        alert('You are on the list. We will email you when community access launches.');
+        document.querySelector('#communityForm input[type="email"]').value = '';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book or Purchase | Chandler Chase</title>
+<meta name="description" content="Book a free discovery call or purchase one of our AI consulting packages.">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+  :root{
+    --gold:#B2814C;
+    --gold-soft:#C9A574;
+    --charcoal:#141210;
+    --cream:#F7F3EC;
+    --txt:rgba(233,228,214,.9);
+    --txt-dim:rgba(233,228,214,.5);
+    --sans:"Calibri","Segoe UI",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:var(--sans);
+    background:radial-gradient(ellipse at 50% 38%, #1E1A15 0%, #16130F 45%, #0C0A08 100%);
+    color:var(--txt);
+    display:grid;place-items:center;padding:20px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:500px;width:100%;background:rgba(20,18,16,.88);
+    border:1px solid rgba(201,165,116,.28);border-radius:16px;padding:40px;
+  }
+  h1{font-size:28px;margin-bottom:12px;font-weight:400;}
+  .sub{font-size:14px;color:var(--txt-dim);margin-bottom:28px;line-height:1.5;}
+  .field{margin-bottom:18px;}
+  label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+    color:var(--gold-soft);margin-bottom:6px;}
+  input,select{
+    width:100%;padding:12px 14px;font-family:var(--sans);font-size:14px;
+    background:rgba(233,228,214,.04);border:1px solid rgba(201,165,116,.28);
+    border-radius:8px;color:var(--txt);outline:none;transition:border-color .2s;
+  }
+  input:focus,select:focus{border-color:var(--gold-soft);}
+  input::placeholder{color:var(--txt-dim);}
+  .slots{
+    margin:20px 0;
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  }
+  .slot{
+    padding:12px;border:1px solid rgba(201,165,116,.28);border-radius:8px;
+    background:rgba(233,228,214,.02);cursor:pointer;text-align:center;font-size:13px;
+    transition:all .2s;
+  }
+  .slot:hover{border-color:var(--gold);background:rgba(201,165,116,.08);}
+  .slot.selected{background:var(--gold);color:var(--charcoal);border-color:var(--gold);font-weight:700;}
+  .submit{
+    width:100%;padding:14px;background:linear-gradient(135deg,var(--gold) 0%, #9A6B3C 100%);
+    color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px;
+    cursor:pointer;transition:opacity .2s;margin-top:14px;
+  }
+  .submit:hover{opacity:.95;}
+  .submit:disabled{opacity:.5;cursor:not-allowed;}
+  .success{display:none;text-align:center;color:var(--gold-soft);}
+  .success.show{display:block;}
+  #card-element{background:rgba(233,228,214,.04);border:1px solid rgba(201,165,116,.28);
+    border-radius:8px;padding:12px 14px;color:var(--txt);}
+  .error{color:#ff6b6b;font-size:12px;margin-top:6px;}
+  .flow-selector{display:none;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid rgba(201,165,116,.28);}
+  .flow-selector.show{display:block;}
+  .flow-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+  .flow-btn{padding:12px;background:rgba(233,228,214,.04);border:1px solid rgba(201,165,116,.28);
+    border-radius:8px;cursor:pointer;text-align:center;font-size:13px;transition:all .2s;}
+  .flow-btn:hover{border-color:var(--gold);background:rgba(201,165,116,.08);}
+  .flow-btn.active{background:var(--gold);color:var(--charcoal);border-color:var(--gold);font-weight:700;}
+  @media(max-width:520px){
+    .wrap{padding:24px;}
+    .slots{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="flow-selector show">
+    <h1>What do you want to do?</h1>
+    <div class="flow-buttons">
+      <div class="flow-btn active" data-flow="discovery">Book Free Call</div>
+      <div class="flow-btn" data-flow="purchase">Purchase Package</div>
+    </div>
+  </div>
+
+  <!-- Discovery Call Form -->
+  <div id="discoveryForm" class="flow">
+    <h1>Discovery Call</h1>
+    <p class="sub">30 minutes. No charge, no pitch. You'll tell me what you are building and where the friction is. You leave with at least one thing you can fix this week, whether we ever work together or not.</p>
+
+    <form id="bookForm">
+      <div class="field">
+        <label for="name">Your name</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+
+      <div class="field">
+        <label>Select a time (ET)</label>
+        <div class="slots" id="slots"></div>
+      </div>
+
+      <button type="submit" class="submit" id="submitBtn">Book call & get calendar invite</button>
+    </form>
+
+    <div class="success" id="discoverySuccess">
+      <p><strong style="color:var(--gold);">✓ Confirmed</strong></p>
+      <p>Check your email for a calendar invite. Chandler will call you at the scheduled time.</p>
+    </div>
+  </div>
+
+  <!-- Purchase Package Form -->
+  <div id="purchaseForm" class="flow" style="display:none;">
+    <h1>Purchase Package</h1>
+    <p class="sub">Choose your package and complete payment below.</p>
+
+    <form id="paymentForm">
+      <div class="field">
+        <label for="package">Select Package</label>
+        <select id="package" name="package" required>
+          <option value="">Choose a package...</option>
+          <option value="starter">Starter - $997</option>
+          <option value="launchpad">Launchpad - $2,997</option>
+          <option value="autopilot">Autopilot - $7,500</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="paymentName">Your name</label>
+        <input type="text" id="paymentName" name="name" required>
+      </div>
+
+      <div class="field">
+        <label for="paymentEmail">Email</label>
+        <input type="email" id="paymentEmail" name="email" required>
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone (optional)</label>
+        <input type="tel" id="phone" name="phone">
+      </div>
+
+      <div class="field">
+        <label>Card details</label>
+        <div id="card-element"></div>
+        <div id="card-errors" class="error"></div>
+      </div>
+
+      <button type="submit" class="submit" id="paymentBtn">Complete Purchase</button>
+    </form>
+
+    <div class="success" id="paymentSuccess">
+      <p><strong style="color:var(--gold);">✓ Payment Successful</strong></p>
+      <p>Check your email for next steps. Chandler will be in touch soon to schedule your first session.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const CHANDLER_EMAIL = "cwc@chandlerchase.com";
+const TIMEZONE = "America/New_York";
+const stripe = Stripe(window.location.hostname === 'localhost' ? 'pk_test_...' : 'pk_live_...');
+let elements, cardElement;
+
+// Initialize Stripe Elements
+function initStripe() {
+  elements = stripe.elements();
+  cardElement = elements.create('card', {
+    style: {
+      base: {
+        fontFamily: 'var(--sans)',
+        color: 'rgba(233,228,214,.9)',
+        backgroundColor: 'transparent'
+      },
+      invalid: { color: '#ff6b6b' }
+    }
+  });
+  cardElement.mount('#card-element');
+  cardElement.addEventListener('change', e => {
+    document.getElementById('card-errors').textContent = e.error ? e.error.message : '';
+  });
+}
+
+// Flow selector
+document.querySelectorAll('.flow-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const flow = btn.dataset.flow;
+    document.querySelectorAll('.flow-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.getElementById('discoveryForm').style.display = flow === 'discovery' ? 'block' : 'none';
+    document.getElementById('purchaseForm').style.display = flow === 'purchase' ? 'block' : 'none';
+
+    if (flow === 'purchase' && !elements) initStripe();
+  });
+});
+
+// ========== DISCOVERY CALL FORM ==========
+function generateSlots(){
+  const slots = [];
+  const now = new Date();
+  const startDate = new Date(now);
+  startDate.setDate(startDate.getDate() + 1);
+
+  for(let d = 0; d < 60; d++){
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + d);
+    const dow = date.getDay();
+    if(dow === 0) continue;
+
+    let times = [15, 15.5, 18, 18.5];
+    if(dow === 2) times = [15, 15.5];
+
+    times.forEach(h => {
+      const slotTime = new Date(date);
+      const hour = Math.floor(h);
+      const min = (h % 1) * 60;
+      slotTime.setHours(hour, min, 0, 0);
+      if(slotTime > now) slots.push(new Date(slotTime));
+    });
+  }
+  return slots.slice(0, 20);
+}
+
+function formatSlot(date){
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    month:'short', day:'numeric', hour:'numeric', minute:'2-digit', hour12:true
+  });
+  return formatter.format(date);
+}
+
+function generateICS(name, email, slotTime){
+  const eventStart = slotTime;
+  const eventEnd = new Date(eventStart.getTime() + 30 * 60000);
+
+  function formatDate(d){
+    return d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  }
+
+  const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Chandler Chase//Discovery Call//EN
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+X-LIC-LOCATION:${TIMEZONE}
+BEGIN:VEVENT
+UID:discovery-${Date.now()}@chandlerchase.ai
+DTSTAMP:${formatDate(new Date())}
+DTSTART:${formatDate(eventStart)}
+DTEND:${formatDate(eventEnd)}
+SUMMARY:Discovery Call with Chandler Chase
+DESCRIPTION:30-minute free consultation. No charge and no pitch.
+LOCATION:Phone Call
+ORGANIZER;CN=Chandler Chase:mailto:${CHANDLER_EMAIL}
+ATTENDEE;CN=${name};RSVP=TRUE:mailto:${email}
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR`;
+  return ics;
+}
+
+const slots = generateSlots();
+const slotsDiv = document.getElementById('slots');
+let selectedSlot = null;
+
+slots.forEach((slot) => {
+  const btn = document.createElement('div');
+  btn.className = 'slot';
+  btn.textContent = formatSlot(slot);
+  btn.onclick = () => {
+    document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedSlot = slot;
+  };
+  slotsDiv.appendChild(btn);
+});
+
+document.getElementById('bookForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if(!selectedSlot){
+    alert('Please select a time');
+    return;
+  }
+
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const btn = document.getElementById('submitBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'Booking...';
+
+  try{
+    const ics = generateICS(name, email, selectedSlot);
+    const payload = {
+      _subject: `Discovery Call Booked: ${formatSlot(selectedSlot)}`,
+      name: name,
+      email: email,
+      time: formatSlot(selectedSlot),
+      message: `Discovery call scheduled\nProspect: ${name}\nEmail: ${email}\nTime: ${formatSlot(selectedSlot)} ET`,
+      _cc: CHANDLER_EMAIL,
+      _ics: ics
+    };
+
+    const response = await fetch("https://formsubmit.co/ajax/" + email, {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify(payload)
+    });
+
+    if(!response.ok) throw new Error("Submission failed");
+
+    await fetch("https://formsubmit.co/ajax/" + CHANDLER_EMAIL, {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify(payload)
+    });
+
+    document.getElementById('bookForm').style.display = 'none';
+    document.getElementById('discoverySuccess').classList.add('show');
+  }catch(err){
+    console.error(err);
+    btn.disabled = false;
+    btn.textContent = 'Book call & get calendar invite';
+    alert('Booking failed. Please try again.');
+  }
+});
+
+// ========== PAYMENT FORM ==========
+document.getElementById('paymentForm').addEventListener('submit', async e => {
+  e.preventDefault();
+
+  const packageType = document.getElementById('package').value;
+  if(!packageType){
+    alert('Please select a package');
+    return;
+  }
+
+  const name = document.getElementById('paymentName').value;
+  const email = document.getElementById('paymentEmail').value;
+  const phone = document.getElementById('phone').value;
+  const btn = document.getElementById('paymentBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+
+  try{
+    // Create PaymentIntent on backend
+    const response = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ package: packageType, email, name, phone })
+    });
+
+    if(!response.ok) throw new Error('Failed to create payment');
+
+    const { clientSecret } = await response.json();
+
+    // Confirm payment with Stripe
+    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: cardElement,
+        billing_details: { name, email }
+      }
+    });
+
+    if(error){
+      throw new Error(error.message);
+    }
+
+    if(paymentIntent.status === 'succeeded'){
+      document.getElementById('paymentForm').style.display = 'none';
+      document.getElementById('paymentSuccess').classList.add('show');
+    }else{
+      throw new Error('Payment not completed');
+    }
+  }catch(err){
+    console.error(err);
+    document.getElementById('card-errors').textContent = err.message;
+    btn.disabled = false;
+    btn.textContent = 'Complete Purchase';
+  }
+});
+</script>
+
+<script>
+const CHANDLER_EMAIL = "cwc@chandlerchase.com";
+const TIMEZONE = "America/New_York";
+
+// Generate available slots: Mon/Tue/Wed/Thu/Fri/Sat 3-4pm and 6-7pm ET (Tue 3-4pm only)
+function generateSlots(){
+  const slots = [];
+  const now = new Date();
+  const startDate = new Date(now);
+  startDate.setDate(startDate.getDate() + 1);
+
+  for(let d = 0; d < 60; d++){
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + d);
+    const dow = date.getDay();
+    // Sun(0) only - skip Sundays
+    if(dow === 0) continue;
+
+    let times = [15, 15.5, 18, 18.5]; // 3:00pm, 3:30pm, 6:00pm, 6:30pm ET
+    if(dow === 2) times = [15, 15.5]; // Tuesday only: 3:00pm, 3:30pm (no 6pm)
+
+    times.forEach(h => {
+      const slotTime = new Date(date);
+      const hour = Math.floor(h);
+      const min = (h % 1) * 60;
+      slotTime.setHours(hour, min, 0, 0);
+      if(slotTime > now) slots.push(new Date(slotTime));
+    });
+  }
+  return slots.slice(0, 20); // show first 20 available slots
+}
+
+function formatSlot(date){
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    month:'short', day:'numeric', hour:'numeric', minute:'2-digit', hour12:true
+  });
+  return formatter.format(date);
+}
+
+function generateICS(name, email, slotTime){
+  const eventStart = slotTime;
+  const eventEnd = new Date(eventStart.getTime() + 30 * 60000); // 30 minutes
+
+  function formatDate(d){
+    return d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  }
+
+  const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Chandler Chase//Discovery Call//EN
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+X-LIC-LOCATION:${TIMEZONE}
+BEGIN:VEVENT
+UID:discovery-${Date.now()}@chandlerchase.ai
+DTSTAMP:${formatDate(new Date())}
+DTSTART:${formatDate(eventStart)}
+DTEND:${formatDate(eventEnd)}
+SUMMARY:Discovery Call with Chandler Chase
+DESCRIPTION:30-minute free consultation. No charge and no pitch.
+LOCATION:Phone Call
+ORGANIZER;CN=Chandler Chase:mailto:${CHANDLER_EMAIL}
+ATTENDEE;CN=${name};RSVP=TRUE:mailto:${email}
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR`;
+
+  return ics;
+}
+
+// Render time slots
+const slots = generateSlots();
+const slotsDiv = document.getElementById('slots');
+let selectedSlot = null;
+
+slots.forEach((slot, i) => {
+  const btn = document.createElement('div');
+  btn.className = 'slot';
+  btn.textContent = formatSlot(slot);
+  btn.onclick = () => {
+    document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedSlot = slot;
+  };
+  slotsDiv.appendChild(btn);
+});
+
+// Handle form submission
+document.getElementById('bookForm').addEventListener('submit', async e => {
+  e.preventDefault();
+
+  if(!selectedSlot){
+    alert('Please select a time');
+    return;
+  }
+
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const btn = document.getElementById('submitBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'Booking...';
+
+  try{
+    // Generate iCal invite
+    const ics = generateICS(name, email, selectedSlot);
+
+    // Send confirmation to prospect and Chandler
+    const payload = {
+      _subject: `Discovery Call Booked: ${formatSlot(selectedSlot)}`,
+      name: name,
+      email: email,
+      time: formatSlot(selectedSlot),
+      message: `Discovery call scheduled\nProspect: ${name}\nEmail: ${email}\nTime: ${formatSlot(selectedSlot)} ET`,
+      _cc: CHANDLER_EMAIL,
+      _ics: ics
+    };
+
+    const response = await fetch("https://formsubmit.co/ajax/" + email, {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify(payload)
+    });
+
+    if(!response.ok) throw new Error("Submission failed");
+
+    // Also send to Chandler
+    await fetch("https://formsubmit.co/ajax/" + CHANDLER_EMAIL, {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify(payload)
+    });
+
+    document.getElementById('bookForm').style.display = 'none';
+    document.getElementById('success').classList.add('show');
+  }catch(err){
+    console.error(err);
+    btn.disabled = false;
+    btn.textContent = 'Book call & get calendar invite';
+    alert('Booking failed. Please try again.');
+  }
+});
+</script>
+</body>
+</html>
