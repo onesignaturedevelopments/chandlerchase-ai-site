@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stop Being Your Own Admin | Chandler Chase</title>
+<title>AI Systems for Solo Operators | Chandler Chase</title>
 <style>
   :root {
     --gold: #B2814C;
@@ -43,7 +43,7 @@
   .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 40px; }
   .hero-text h1 { font-size: 52px; }
   .hero-image { text-align: center; }
-  .hero-image img { max-width: 100%; border-radius: 12px; }
+  .hero-image img { max-width: 100%; border-radius: 12px; width: 280px; height: 280px; object-fit: cover; }
   .avatar-card { background: rgba(20,18,16,.5); border: 1px solid rgba(201,165,116,.2); border-radius: 12px; padding: 32px; margin: 48px 0; }
   .avatar-card h3 { color: var(--gold); }
   .avatar-card p { margin-bottom: 12px; }
@@ -51,9 +51,9 @@
   .system-item { background: rgba(20,18,16,.4); border-left: 3px solid var(--gold); padding: 20px; border-radius: 6px; }
   .system-item h4 { color: var(--gold-soft); font-size: 14px; margin-bottom: 8px; }
   .system-item p { font-size: 15px; }
-  .coming-soon-section { background: rgba(20,18,16,.5); border: 2px dashed rgba(201,165,116,.3); border-radius: 12px; padding: 48px; text-align: center; margin: 48px 0; }
-  .coming-soon-blur { opacity: 0.5; filter: blur(2px); pointer-events: none; margin: 24px 0; }
-  .coming-soon-blur svg { max-width: 200px; height: 200px; margin: 0 auto; display: block; }
+  .coming-soon-section { background: rgba(20,18,16,.5); border: 2px dashed rgba(201,165,116,.3); border-radius: 12px; padding: 48px; text-align: center; margin: 48px 0; transition: all 0.6s ease-out; }
+  .coming-soon-blur { filter: blur(3px); opacity: 0.4; transition: all 0.6s ease-out; }
+  .coming-soon-section:hover .coming-soon-blur { filter: blur(0px); opacity: 1; }
   .cta-box { background: rgba(20,18,16,.6); border: 2px solid var(--gold); border-radius: 10px; padding: 32px; margin-top: 32px; text-align: center; }
   .cta-box h3 { font-size: 24px; margin-bottom: 16px; color: var(--txt); }
   .cta-box p { margin-bottom: 20px; color: var(--txt-dim); }
@@ -99,7 +99,7 @@
   <div class="wrap nav">
     <div class="logo">chandlerchase<span>.ai</span></div>
     <div class="nav-right">
-      <a href="/skilltree.html">Skill Tree</a>
+      <a href="#skillTree">Skill Tree</a>
       <a href="/freebies.html">Free Resources</a>
       <a href="#pricing">Pricing</a>
       <a href="https://www.linkedin.com/in/chandler-chase-007/" target="_blank">LinkedIn</a>
@@ -113,11 +113,20 @@
     <div class="kicker">AI Consulting for Founders</div>
     <h1>Stop being your own admin.</h1>
     <p class="lead">You're building something. You're doing the work yourself. That means you're also doing the admin, the follow-ups, the proposals, the systems. You know AI can handle this. You just need someone to show you how, and coach you through it so you actually use it.</p>
-    <a class="btn" href="/booking.html">Book a 30-min discovery call</a>
+    <div class="hero-grid">
+      <div class="hero-text">
+        <a class="btn" href="/booking.html">Book a 30-min discovery call</a>
+        <p style="margin-top: 20px; font-size: 14px; color: var(--txt-dim);">I'm a founder who automated my own business first. This is what I use.</p>
+      </div>
+      <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop" alt="Chandler Chase" style="border-radius: 50%; width: 240px; height: 240px; border: 2px solid rgba(201,165,116,.3);">
+        <p style="margin-top: 16px; font-size: 12px; color: var(--txt-dim); font-style: italic;">@chandlerchase on LinkedIn</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<section>
+<section id="skillTree">
   <div class="wrap" style="text-align:center;">
     <div class="kicker">The Framework</div>
     <h2>26 AI systems. One business that runs itself.</h2>
@@ -240,7 +249,7 @@
         <h4>Onboarding</h4>
         <p class="muted" style="font-size: 14px; margin-bottom: 16px;">Done with you</p>
         <div class="price">$997<small> one-time</small></div>
-        <p style="margin-bottom: 20px; font-size: 14px;">In one week, your phone gets answered and every lead followed up, running in the background while you stay on the work.</p>
+        <p style="margin-bottom: 20px; font-size: 14px;">Two sessions to audit your business and build your first AI system live with you.</p>
         <ul>
           <li>Session 1: AI Audit of your business</li>
           <li>Session 2: AI Solutions built with you</li>
@@ -251,11 +260,26 @@
         <a href="/booking.html" class="btn" style="display: block; text-align: center;">Book discovery call</a>
       </div>
 
+      <div class="pricing-card">
+        <h4>Business Dev Launchpad</h4>
+        <p class="muted" style="font-size: 14px; margin-bottom: 16px;">Done with you, lead focused</p>
+        <div class="price">$2,500<small> one-time</small></div>
+        <p style="margin-bottom: 20px; font-size: 14px;">Three sessions to build your full lead generation engine from prospecting to follow-up.</p>
+        <ul>
+          <li>Sales pipeline system built with you</li>
+          <li>AI trained to write in your voice</li>
+          <li>Lead capture and follow-up automated</li>
+          <li>3 sessions, done with you</li>
+          <li>30 days of tuning included</li>
+        </ul>
+        <a href="/booking.html" class="btn" style="display: block; text-align: center;">Book discovery call</a>
+      </div>
+
       <div class="pricing-card featured">
         <h4>Launchpad</h4>
         <p class="muted" style="font-size: 14px; margin-bottom: 16px;">Done with you</p>
-        <div class="price">$3,997<small> one-time</small></div>
-        <p style="margin-bottom: 20px; font-size: 14px;">In two weeks, your business gets a brain AI runs from: your Flight Manual plus the systems that fill your calendar.</p>
+        <div class="price">$3,500<small> one-time</small></div>
+        <p style="margin-bottom: 20px; font-size: 14px;">Four sessions to give your business a brain and fill your calendar.</p>
         <ul>
           <li>Your Flight Manual, your AI-ready business brain</li>
           <li>AI trained to write in your voice</li>
@@ -269,8 +293,8 @@
       <div class="pricing-card">
         <h4>Autopilot</h4>
         <p class="muted" style="font-size: 14px; margin-bottom: 16px;">Done for you, custom</p>
-        <div class="price">from $7,997</div>
-        <p style="margin-bottom: 20px; font-size: 14px;">Fully custom, done for you. We build your AI systems around your business over 30 to 60 days.</p>
+        <div class="price">$7,500<small> one-time</small></div>
+        <p style="margin-bottom: 20px; font-size: 14px;">Fully custom, done for you. We build your AI systems around your business.</p>
         <ul>
           <li>Custom AI systems, scoped to you</li>
           <li>Deep-dive audit to start</li>
@@ -290,16 +314,18 @@
     <h2>Community Access</h2>
     <p>Private community for founders using these systems. Live office hours, peer support, win celebrations, and direct access to the systems library.</p>
 
-    <div class="coming-soon-section" style="opacity: 0.6; filter: blur(1px);">
-      <h3>Join the founders building with AI</h3>
-      <p style="margin-bottom: 20px;">Get early access and founding member pricing when we launch.</p>
+    <div class="coming-soon-section">
+      <div class="coming-soon-blur">
+        <h3>Join the founders building with AI</h3>
+        <p style="margin-bottom: 20px;">Get early access and founding member pricing when we launch.</p>
 
-      <form id="communityForm">
-        <input type="email" name="email" placeholder="your@email.com" required style="width: 100%; max-width: 400px; padding: 12px; border: 1px solid rgba(201,165,116,.3); border-radius: 6px; background: rgba(0,0,0,.3); color: var(--txt); margin-bottom: 12px;">
-        <br>
-        <button type="submit" class="btn" style="width: auto;">Get First Access</button>
-        <p class="note" style="margin-top: 16px;">You'll get one email when community launches. That's it.</p>
-      </form>
+        <form id="communityForm">
+          <input type="email" name="email" placeholder="your@email.com" required style="width: 100%; max-width: 400px; padding: 12px; border: 1px solid rgba(201,165,116,.3); border-radius: 6px; background: rgba(0,0,0,.3); color: var(--txt); margin-bottom: 12px;">
+          <br>
+          <button type="submit" class="btn" style="width: auto;">Get First Access</button>
+          <p class="note" style="margin-top: 16px;">You'll get one email when community launches. That's it.</p>
+        </form>
+      </div>
     </div>
   </div>
 </section>
@@ -362,7 +388,7 @@
     <p>Chandler Chase AI Consulting</p>
     <div class="footer-links">
       <a href="/freebies.html">Free Resources</a>
-      <a href="/pricing.html">Pricing</a>
+      <a href="#pricing">Pricing</a>
       <a href="https://www.linkedin.com/in/chandler-chase-007/" target="_blank">LinkedIn</a>
       <a href="mailto:cwc@chandlerchase.com">Email</a>
     </div>
